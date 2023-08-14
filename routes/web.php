@@ -1,6 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CustomerGroupController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\EmailTemplateController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\EmailScheduleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,4 +24,16 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('home', [HomeController::class, 'index'])->name('home');
+
+Route::group(['middleware' => 'web'], function() {
+    Route::resource('groups', CustomerGroupController::class);
+    Route::resource('customers', CustomerController::class);
+    Route::resource('templates', EmailTemplateController::class);
+    Route::resource('schedules', EmailScheduleController::class);
+});
+
+Route::post('/templates/send', [EmailTemplateController::class, 'send']);
+//Route::post('/schedules/store', [EmailScheduleController::class, 'store']);
+
+
