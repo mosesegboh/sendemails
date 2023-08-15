@@ -31,6 +31,8 @@ To create the necessary tables.
 Run php artisan migrate
 - Run the development servers: Start the development server by running:
 php artisan serve
+- The is a queue job created for the sending email funtionality,remember to run
+-  php artisan queue:work
 
 
 Points and Reasons For Some functionality decisions made regarding the application.
