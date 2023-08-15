@@ -38,29 +38,8 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = Customer::all();
-        return twig('home', ['customers' => $customers]);
+        return view('home', ['customers' => $customers]);
     }
-
-    /**
-     * Store a newly created customer in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-//    public function store1(Request $request)
-//    {
-//        $data = $request->validate([
-//            'first_name' => 'required|string|max:150',
-//            'last_name' => 'required|string|max:150',
-//            'email' => 'required|email|unique:customers,email',
-//            'sex' => 'nullable|in:male,female,other',
-//            'birth_date' => 'nullable|date'
-//        ]);
-//
-//        Customer::create($data);
-//
-//        return redirect()->route('customers.index');
-//    }
 
     /**
      * Store a newly created group in storage.
@@ -75,9 +54,8 @@ class CustomerController extends Controller
                 'first_name' => 'required|string|max:150',
                 'last_name' => 'required|string|max:150',
                 'email' => 'email|unique:customers,email',
-                'sex' => 'in:male,female', // Adjusted the validation rule based on your modal fields
-                'birth_date' => 'required|date',
-                'emailGroups' => 'required|exists:customer_groups,id' // Validate that the selected group exists in your groups table
+                'sex' => 'in:male,female',
+                'emailGroups' => 'required|exists:customer_groups,id'
             ]);
 
             $customer = Customer::create($data);
@@ -90,13 +68,11 @@ class CustomerController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Group created successfully!',
+                'message' => 'Customer added to group successfully!',
                 'customer' => $customer
             ], 200);
 
         } catch (ValidationException $e) {
-
-            // Return error response
             return response()->json([
                 'status' => 'error',
                 'message' => $e->errors(),

@@ -16,6 +16,8 @@ use App\Models\CustomerGroup;
 use Illuminate\Http\Request;
 use App\Models\EmailTemplate;
 use Illuminate\Validation\ValidationException;
+use App\Jobs\SendGroupEmail;
+use Carbon\Carbon;
 
 /**
  * Class EmailTemplateController
@@ -78,23 +80,46 @@ class EmailTemplateController extends Controller
     }
 
     /**
-     * Send emails immediately.
+     * Send emails immediately and schedule to a later date.
      *
      * @param  Request $request
      * @return Response
      */
     public function send(Request $request)
     {
-        $template = EmailTemplate::find($request->input('emailTemplates'));
-        $group = CustomerGroup::find($request->input('emailGroups'));
+        try {
+            $rules = [
+                'emailGroups' => 'required|string',
+                'emailTemplates' => 'required|string',
+            ];
 
-        foreach ($group->customers as $customer) {
-            $subject = $template->subject;
-//            $body = preg_replace(['/{first_name}/', '/{last_name}/', '/{email}/'], [$customer->first_name, $customer->last_name, $customer->email], $template->body);
-            $body =  $template->body;
-            sendEmail($subject, $body, $customer->email);
+            if ($request->has('shouldSchedule') && $request->get('shouldSchedule') == 'on') {
+                $rules['scheduledDate'] = 'required|string';
+            }
+
+            $request->validate($rules);
+
+            $group = CustomerGroup::find($request->input('emailGroups'));
+            $template = EmailTemplate::find($request->input('emailTemplates'));
+
+
+            if ($request->filled('scheduledDate')) {
+                $scheduleDate = Carbon::parse($request->input('scheduledDate'));
+                SendGroupEmail::dispatch($group, $template)->delay($scheduleDate);
+            }else{
+                SendGroupEmail::dispatch($group, $template);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Emails has been queued successfully',
+            ], 200);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->errors(),
+            ], 422);
         }
-
-        return response()->json(['message' => 'Emails sent successfully']);
     }
 }

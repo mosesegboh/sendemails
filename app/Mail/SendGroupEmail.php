@@ -3,11 +3,10 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class SendGroupEmail extends Mailable
+class SendGroupEmailMailable extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -19,9 +18,10 @@ class SendGroupEmail extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($subject, $body)
     {
-        //
+        $this->subject = $subject;
+        $this->body = $body;
     }
 
     /**
@@ -31,6 +31,6 @@ class SendGroupEmail extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this->subject($this->subject)->html($this->body);
     }
 }

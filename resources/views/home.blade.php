@@ -126,7 +126,7 @@
                         </div>
                         <div class="modal-body">
                             <div id="responseMessage" class="text-center mb-2"></div>
-{{--                            <div id="groupRoute" data-store-url="{{ route('groups.store') }}"></div>--}}
+                            <div id="groupRoute" data-store-url="{{ route('groups.store') }}"></div>
                             <form action="{{ route('groups.store') }}" method="post" id="addGroupForm">
                                 @csrf
                                 <div class="form-group row mb-3">
@@ -159,7 +159,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div id="responseMessage" class="text-center mb-2"></div>
+                            <div id="responseMessageEdit" class="text-center mb-2"></div>
                             <div id="groupRoute" data-store-url="{{ route('groups.store') }}"></div>
                             <form action="{{ route('groups.store') }}" method="post" id="editGroupForm">
                                 @csrf
@@ -291,19 +291,22 @@
                                     </div>
                                 </div>
 
-                                <div class="col-sm-10 mb-3">
-                                    <button type="submit" class="btn btn-primary mb-2">Send Mails Now</button>
+                                <div class="form-group row mb-3">
+                                    <label for="lastName" class="col-sm-4 col-form-label">Schedule email in the future</label>
+                                    <div class="col-sm-8">
+                                        <input type="checkbox" name="shouldSchedule" class="form-check-input" id="shouldSchedule">
+                                    </div>
                                 </div>
+
+                                <hr>
+                                <div class="col-sm-10 mt-3" id="sendFutureDisplay" style="display: none">
+                                    <h4>Schedule Emails in the future</h4>
+                                    <input type="date" name="scheduledDate" class="form-control mb-2 w-50" id="scheduledDate">
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-3">Send Mails</button>
                             </form>
-                            <hr>
-                            <div class="col-sm-10 mt-3">
-                                <h4>Schedule Emails in the future</h4>
-                                <form id="scheduleEmailForm">
-                                    <input type="date" name="birth_date" class="form-control mb-2 w-50" id="birthDate">
-                                    <button type="submit" class="btn btn-primary">Schedule Emails</button>
-                                </form>
-                            </div>
                         </div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         </div>
@@ -329,7 +332,6 @@
                                     <th scope="col">Group Name</th>
                                     <th scope="col">Edit</th>
                                     <th scope="col">Remove</th>
-{{--                                    <th scope="col">View</th>--}}
                                 </tr>
                             </thead>
                             <tbody id="groupsTableBody">
@@ -359,14 +361,6 @@
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </td>
-{{--                                        <td>--}}
-{{--                                            <a href="#" class="mb-2 viewButtonsList"--}}
-{{--                                               data-id="{{ $group->id }}"--}}
-{{--                                            >--}}
-{{--                                                <i class="fas fa-eye"></i>--}}
-{{--                                            </a>--}}
-{{--                                        </td>--}}
-
                                     </tr>
                                 @empty
                                     <tr>

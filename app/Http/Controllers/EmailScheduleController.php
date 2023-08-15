@@ -14,8 +14,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\EmailSchedule;
-use App\Models\EmailTemplate;
-use App\Models\CustomerGroup;
 /**
  * Class EmailScheduleController
  *
@@ -29,17 +27,6 @@ use App\Models\CustomerGroup;
  */
 class EmailScheduleController extends Controller
 {
-    /**
-     * Display a listing of the email schedules.
-     *
-     * @return \Twig\Environment
-     */
-    public function index()
-    {
-        $schedules = EmailSchedule::with(['emailTemplate', 'group'])->get();
-        return twig('schedules.index', ['schedules' => $schedules]);
-    }
-
     /**
      * Store a newly created email schedule in storage.
      *

@@ -1,64 +1,44 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+Send Emails
+An MVP app built for sending emails.
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Prerequisites
+Before you begin, ensure you have the following software installed on your PC:
 
-## About Laravel
+Git: https://git-scm.com/downloads
+PHP (7.4 or higher): https://www.php.net/downloads
+Composer: https://getcomposer.org/download/
+Node.js and npm: https://nodejs.org/en/download/
+Laravel: https://laravel.com/
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Installation and Setup
+Clone the repository: Open your terminal or command prompt and navigate to the desired directory where the project will be cloned. Run the following command: -git clone https://github.com/mosesegboh/sendemails.git
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Navigate to the project directory: After cloning the repository, navigate to the project directory by running:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+cd teams
+- Install PHP dependencies: Run the following command to install the required PHP dependencies for the Laravel application:
+run composer install
+- JQuery was used in the app so no need to Install JavaScript dependencies.
+- Configure the environment: Copy the .env.example file to create a new .env.local file, which will store your local environment variables. Edit database credentials accordingly. 
+- (DB_CONNECTION=mysql,DB_HOST=127.0.0.1,DB_PORT=3306,DB_DATABASE=YOUR DATABASE NAME,DB_USERNAME=YOUR USERNAME DB_PASSWORD=YOUR PASSWORD)
+run mv .env.example .env.local
+- Edit the .env.local file to configure any necessary variables, such as database connection settings, API keys, or other configurations specific to the local environment.
+- Set up the database (if applicable):
+- I used mailtrap for sending data. Let me know if you my credentials and I will forward to you, if not you can us your own credentials. Edit accordingly. (MAIL_HOST, MAIL_POST, MAIL_USERNAME, MAIL_PASSWORD).
+- To make things easier I have also attached my database file in the root dir called sendemails.sql. just import this into your database and use accordingly.
+- Or if you like you can migrate the necessary tables to use your own data.
+To create the necessary tables.
+Run php artisan migrate
+- Run the development servers: Start the development server by running:
+php artisan serve
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Points and Reasons For Some functionality decisions made regarding the application.
+- Due to the time constraints, I used jquery for the javascript in contrast to react or vuejs. Which is easier to set up. The decision was intentional
+- I purposely employed the use of modals which I feel was better for aesthetics. My personal opinion.
+- Due to time limitation I also delpoyed laravel authentication scaffolding for faster development.
+- Due to the fact that I employed the use of modals and I need data populated in real time without refreshing the page, I employed the use 
+    of javascript for populating some of the tables. I indicated this in comments in the code.
+- All features has been added regarding the test requirements and unnecessary features were intentionally omitted due to time constraints.
+- The application works fine in my on my local environment, so kindly let me know if you are experiencing any errors.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

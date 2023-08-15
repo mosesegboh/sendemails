@@ -15,7 +15,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\CustomerGroup;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Http\JsonResponse;
 
 /**
  * Class CustomerGroupController
@@ -53,7 +52,7 @@ class CustomerGroupController extends Controller
      */
     public function create()
     {
-        return twig('groups/create');
+        return view('groups/create');
     }
 
     /**
@@ -78,8 +77,6 @@ class CustomerGroupController extends Controller
             ], 200);
 
         } catch (ValidationException $e) {
-
-            // Return error response
             return response()->json([
                 'status' => 'error',
                 'message' => $e->errors(),
@@ -128,7 +125,6 @@ class CustomerGroupController extends Controller
      */
     public function update(Request $request, $id)
     {
-//        die('i was here');
         $group = CustomerGroup::find($id);
 
         if (!$group) {

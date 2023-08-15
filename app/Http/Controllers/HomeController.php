@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\CustomerGroup;
-use App\Models\Customer;
 
 class HomeController extends Controller
 {
@@ -25,8 +23,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $groups = CustomerGroup::paginate(5);
-//        $customers = Customer::paginate(5);
+        $groups = CustomerGroup::paginate(10);
         return view('home', ['groups' => $groups]);
     }
 }

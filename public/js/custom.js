@@ -1,6 +1,6 @@
 /**
 * @desc For sending data into the
-* groups route for saving data
+* groups route for storing groups process
 */
 $(document).ready(function(){
     $.ajaxSetup({
@@ -14,18 +14,23 @@ $(document).ready(function(){
 
         $('#loader').show();
 
-//        let storeUrl = document.querySelector("#groupRoute").getAttribute("data-store-url");
         let groupName = $("input[name='groupName']").val();
+        let storeUrl = document.querySelector("#groupRoute").getAttribute("data-store-url");
 
         $.ajax({
-            url: 'groups/store',
+            url: storeUrl,
             method: 'POST',
             data: {
-                _token: $('meta[name="csrf-token"]').attr('content'), // CSRF token
+                _token: $('meta[name="csrf-token"]').attr('content'),
                 name: groupName,
             },
             success: function(data){
-                $('#responseMessage').text(data.message).css('color', 'green');
+                $('#responseMessage').html('<div class="alert alert-success">'+data.message+'</div>');
+                setTimeout(function(){
+                    $('#responseMessage .alert').fadeOut('slow', function() {
+                        $(this).remove();
+                    });
+                }, 5000);
                 let newRow = `
                     <tr>
                         <th scope="row">${data.group.id}</th>
@@ -67,10 +72,16 @@ $(document).ready(function(){
                     for (let field in response.message) {
                         errorMessage += response.message[field].join(',       ');
                     }
-                    $('#responseMessage').text(errorMessage).css('color', 'red');
+                    $('#responseMessage').html('<div class="alert alert-danger">'+errorMessage+'</div>');
                 } else {
-                    $('#responseMessage').text('An unexpected error occurred.').css('color', 'red');
+                    $('#responseMessage').html('<div class="alert alert-danger">An unexpected error occurred</div>');
                 }
+
+                setTimeout(function(){
+                    $('#responseMessage .alert').fadeOut('slow', function() {
+                        $(this).remove();
+                    });
+                }, 5000);
             }
         });
     });
@@ -78,7 +89,7 @@ $(document).ready(function(){
 
 /**
 * @desc For sending data into the
-* groups route for updating data
+* groups route for updating process
 */
 $(document).on('click', '.editGroupButton', function(e) {
     e.preventDefault();
@@ -99,8 +110,22 @@ $(document).on('click', '.editGroupButton', function(e) {
         complete: function() {
             $('#loader').hide();
         },
-        error: function(error) {
-            console.error('Failed to fetch the group details.', error);
+        error: function(xhr){
+            if (xhr.status === 422 && xhr.responseJSON) {
+                let response = xhr.responseJSON;
+                let errorMessage = '';
+                for (let field in response.message) {
+                    errorMessage += response.message[field].join(',       ');
+                }
+                $('#responseMessageEdit').html('<div class="alert alert-danger">'+errorMessage+'</div>');
+            } else {
+                $('#responseMessageEdit').html('<div class="alert alert-danger">An unexpected error occurred</div>');
+            }
+            setTimeout(function(){
+                $('#responseMessageEdit .alert').fadeOut('slow', function() {
+                    $(this).remove();
+                });
+            }, 5000);
         }
     });
 });
@@ -125,13 +150,32 @@ $(document).on('click', '.deleteGroupButton', function(e) {
             },
             success: function(response) {
                 currentRow.remove();
-                $('#responseMessageTable').text('Group  deleted successfully').css('color', 'green');
+                $('#responseMessageTable').html('<div class="alert alert-success">Group  deleted successfully</div>');
+                setTimeout(function(){
+                    $('#responseMessageTable .alert').fadeOut('slow', function() {
+                        $(this).remove();
+                    });
+                }, 5000);
             },
             complete: function() {
                 $('#loader').hide();
             },
-            error: function(error) {
-                console.error('Failed to delete the group.', error);
+            error: function(xhr){
+                if (xhr.status === 422 && xhr.responseJSON) {
+                    let response = xhr.responseJSON;
+                    let errorMessage = '';
+                    for (let field in response.message) {
+                        errorMessage += response.message[field].join(',       ');
+                    }
+                    $('#responseMessageTable').html('<div class="alert alert-danger">'+errorMessage+'</div>');
+                } else {
+                    $('#responseMessageTable').html('<div class="alert alert-danger">An unexpected error occurred</div>');
+                }
+                setTimeout(function(){
+                    $('#responseMessageTable .alert').fadeOut('slow', function() {
+                        $(this).remove();
+                    });
+                }, 5000);
             }
         });
     }
@@ -176,7 +220,8 @@ $(document).on('click', '.addEmailButton', function(e) {
 
 /**
 * @desc For sending data into the
-* groups route for deleting groups data
+* customers route for adding customer
+* data to groups
 */
 $(document).ready(function(){
     $.ajaxSetup({
@@ -196,11 +241,17 @@ $(document).ready(function(){
             method: 'POST',
             data: formData,
             success: function(response) {
-                if (response.success) {
-                    $('#responseMessageEmail').text(response.message).css('color', 'green');
+                $("#addCustomerEmailForm")[0].reset();
+                if (response.status = "success") {
+                    $('#responseMessageEmail').html('<div class="alert alert-success">'+response.message+'</div>');
                 } else {
-                    $('#responseMessageEmail').text(response.message).css('color', 'green');
+                    $('#responseMessageEmail').html('<div class="alert alert-danger">An unexpected error occurred.</div>');
                 }
+                setTimeout(function(){
+                  $('#responseMessageEmail .alert').fadeOut('slow', function() {
+                      $(this).remove();
+                  });
+                }, 5000);
             },
             complete: function() {
                 $('#loader').hide();
@@ -212,10 +263,15 @@ $(document).ready(function(){
                    for (let field in response.message) {
                        errorMessage += response.message[field].join(', ');
                    }
-                   $('#responseMessageEmail').text(errorMessage).css('color', 'red');
+                    $('#responseMessageEmail').html('<div class="alert alert-danger">'+errorMessage+'</div>');
                } else {
-                   $('#responseMessageEmail').text('An unexpected error occurred.').css('color', 'red');
+                    $('#responseMessageEmail').html('<div class="alert alert-danger">An unexpected error occurred.</div>');
                }
+               setTimeout(function(){
+                  $('#responseMessageEmail .alert').fadeOut('slow', function() {
+                      $(this).remove();
+                  });
+               }, 5000);
             }
         });
     });
@@ -261,12 +317,18 @@ $(document).ready(function(){
             },
 
             error: function(xhr) {
-                if (xhr.status === 404 && xhr.responseJSON) {
+               if (xhr.status === 404 && xhr.responseJSON) {
                     $('#exampleModalEmails').modal('show');
-                   $('#responseMessageEmail').text('There is not email in thisgroup').css('color', 'red');
+
+                    $('#responseMessageEmail').html('<div class="alert alert-danger">There is not email in this group</div>');
                } else {
-                   $('#responseMessageEmail').text('An unexpected error occurred.').css('color', 'red');
+                    $('#responseMessageEmail').html('<div class="alert alert-danger">An unexpected error occurred</div>');
                }
+               setTimeout(function(){
+                   $('#responseMessageEmail .alert').fadeOut('slow', function() {
+                       $(this).remove();
+                   });
+               }, 5000);
             }
         });
     });
@@ -293,7 +355,7 @@ $(document).ready(function(){
                 name: $("#groupNameEdit").val()
             },
             success: function(data){
-                $('#responseMessage').text(data.message).css('color', 'green');
+                $('#responseMessage').html('<div class="alert alert-success">'+data.message+'</div>');
                 $(`#groupsTableBody .groupNameIdentifier[data-id="${groupId}"]`).text(data.group.name);
                 $('#exampleModalGroupEdit').modal('hide');
             },
@@ -307,9 +369,9 @@ $(document).ready(function(){
                     for (let field in response.message) {
                         errorMessage += response.message[field].join(', ');
                     }
-                    $('#responseMessage').text(errorMessage).css('color', 'red');
+                    $('#responseMessage').html('<div class="alert alert-danger">'+errorMessage+'</div>');
                 } else {
-                    $('#responseMessage').text('An unexpected error occurred.').css('color', 'red');
+                    $('#responseMessage').html('<div class="alert alert-danger">An unexpected error occurred.</div>');
                 }
             }
         });
@@ -338,8 +400,16 @@ $(document).ready(function () {
             type: "POST",
             data: $(this).serialize(),
             success: function (response) {
-                $('#responseMessageEmailTemplate')html('<div class="alert alert-success">Templates saved successfully!</div>');
-//                .text(response.message).css('color', 'green');
+                if (response.status === "success") {
+                    $('#responseMessageEmailTemplate').html('<div class="alert alert-success">Templates saved successfully!</div>');
+                }else{
+                    $('#responseMessageEmailTemplate').html('<div class="alert alert-danger">An unexpected error occurred!</div>');
+                }
+                setTimeout(function(){
+                    $('#responseMessageEmailTemplate .alert').fadeOut('slow', function() {
+                        $(this).remove();
+                    });
+                }, 5000);
             },
             complete: function() {
                 $('#loader').hide();
@@ -351,15 +421,19 @@ $(document).ready(function () {
                     for (let field in response.message) {
                         errorMessage += response.message[field].join(',       ');
                     }
-                    $('#responseMessageEmailTemplate').text(errorMessage).css('color', 'red');
+                        $('#responseMessageEmailTemplate').html('<div class="alert alert-danger">'+errorMessage+'</div>');
                 } else {
-                    $('#responseMessageEmailTemplate').text('An unexpected error occurred.').css('color', 'red');
+                    $('#responseMessageEmailTemplate').html('<div class="alert alert-danger">An unexpected error occurred!</div>');
                 }
+                setTimeout(function(){
+                    $('#responseMessageEmailTemplate .alert').fadeOut('slow', function() {
+                        $(this).remove();
+                    });
+                }, 5000);
             }
         });
     });
 });
-
 
 /**
 * @desc For sending data to route populating
@@ -374,7 +448,6 @@ $(document).on('click', '.sendEmailButton', function(e) {
         url: "templates/show",
         method: 'GET',
         success: function(data) {
-            // Populate groups
             let groupSelect = $('select[name="emailGroups"]');
             groupSelect.empty();
             groupSelect.append($('<option>', {
@@ -388,7 +461,6 @@ $(document).on('click', '.sendEmailButton', function(e) {
                 }));
             });
 
-            // Populate templates
             let templateSelect = $('select[name="emailTemplates"]');
             templateSelect.empty();
             templateSelect.append($('<option>', {
@@ -433,52 +505,45 @@ $(document).on('submit', '#sendMailsForm', function(e) {
         method: 'POST',
         data: formData,
         success: function(response) {
-            $('#responseMessageSend').html('<div class="alert alert-success">Emails sent successfully!</div>');
+            if (response.status == 'success') {
+                $("#sendMailsForm")[0].reset();
+                $('#responseMessageSend').html('<div class="alert alert-success">Emails scheduled successfully!</div>');
+                setTimeout(function(){
+                    $('#responseMessageSend .alert').fadeOut('slow', function() {
+                        $(this).remove();
+                    });
+                }, 5000);
+            } else {
+                $('#responseMessageSend').html('<div class="alert alert-danger">An unexpected error occured. Please try again later.</div>');
+            }
+            setTimeout(function(){
+                $('#responseMessageSend .alert').fadeOut('slow', function() {
+                    $(this).remove();
+                });
+            }, 5000);
         },
-        error: function(error) {
-            console.error('Failed to send emails.', error);
-            $('#responseMessageSend').html('<div class="alert alert-danger">Failed to send emails. Please try again later.</div>');
-        },
-        complete: function() {
-            $('#loader').hide();
-        }
-    });
-});
-
-/**
-* @desc method For sending data to route
-* scheduling email in the future.
-**/
-$(document).on('submit', '#scheduleEmailForm', function(e) {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-    e.preventDefault();
-
-    $('#loader').show();
-
-    let formData = $(this).serialize();
-
-    $.ajax({
-        url: "/schedules/store",
-        method: 'POST',
-        data: formData,
-        success: function(response) {
-            $('#responseMessageSend').html('<div class="alert alert-success">Emails scheduled successfully!</div>');
-        },
-        error: function(error) {
-            console.error('Failed to schedule emails.', error);
-            $('#responseMessageSend').html('<div class="alert alert-danger">Failed to schedule emails. Please try again later.</div>');
+        error: function(xhr) {
+             if (xhr.status === 422 && xhr.responseJSON) {
+                let response = xhr.responseJSON;
+                let errorMessage = '';
+                for (let field in response.message) {
+                    errorMessage += response.message[field].join(',       ');
+                }
+                $('#responseMessageSend').html('<div class="alert alert-danger">'+errorMessage+'</div>');
+            } else {
+                $('#responseMessageSend').html('<div class="alert alert-danger">An unexpected error occured. Please try again later.</div>');
+            }
+            setTimeout(function(){
+                $('#responseMessageSend .alert').fadeOut('slow', function() {
+                    $(this).remove();
+                });
+            }, 5000);
         },
         complete: function() {
             $('#loader').hide();
         }
     });
 });
-
-
 
 /**
 * @desc configurations for the
@@ -501,6 +566,19 @@ tinymce.init({
             }
         });
     }
+});
+
+/**
+* @desc hide and unhide schedule date when checkbox is clicked.
+*/
+$(document).ready(function(){
+    $('#shouldSchedule').change(function(){
+        if($(this).prop("checked")) {
+            $('#sendFutureDisplay').show();
+        } else {
+            $('#sendFutureDisplay').hide();
+        }
+    });
 });
 
 

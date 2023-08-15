@@ -19,7 +19,7 @@ use App\Http\Controllers\EmailScheduleController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Auth::routes();
@@ -34,6 +34,5 @@ Route::group(['middleware' => 'web'], function() {
 });
 
 Route::post('/templates/send', [EmailTemplateController::class, 'send']);
-//Route::post('/schedules/store', [EmailScheduleController::class, 'store']);
 
 
